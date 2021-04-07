@@ -1,6 +1,11 @@
+let mysql = require("mysql");
+
 module.exports = {
   view(option) {
-    console.log(`I have chosen ${option}`);
+    connection.query(`SELECT ${option}  FROM employee_tracker`, (err, res) => {
+      if (err) throw err;
+      console.table(res);
+    });
   },
   add() {
     console.log("view baby");

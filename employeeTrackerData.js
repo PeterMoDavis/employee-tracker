@@ -1,6 +1,5 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
-const { view, add, update } = require("./helperFunctions");
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -16,6 +15,26 @@ const connection = mysql.createConnection({
   database: "employee_tracker",
 });
 
+//functions==========================================================================
+//VIEW
+function view(option) {
+  connection.query(`SELECT * FROM ${option}`, (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    start();
+  });
+}
+//ADD
+function add() {
+  console.log("view baby");
+}
+//UPDATE
+function update() {
+  console.log("view baby");
+}
+
+//==================================================================================
+
 let start = () => {
   inquirer
     .prompt([
@@ -27,6 +46,7 @@ let start = () => {
           "View departments, roles or employees",
           "Add departments, roles or Employees",
           "Update employee roles",
+          "End",
         ],
       },
     ])
@@ -68,8 +88,6 @@ connection.connect((err) => {
 const afterConnection = () => {
   connection.query("SELECT * FROM role", (err, res) => {
     if (err) throw err;
-    console.table(res);
     start();
-    connection.end();
   });
 };

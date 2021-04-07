@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
+let view = require("./helperFunctions");
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -33,7 +34,19 @@ let start = () => {
       let data = response.options;
       switch (data) {
         case "View departments, roles or employees":
-          console.log("View");
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                message: "Would you like to view:",
+                name: "options",
+                choices: ["Departments", "Roles", "Employees"],
+              },
+            ])
+            .then(({ options }) => {
+              let chosen = options.toLowerCase().slice(0, -1);
+              view();
+            });
           break;
         case "Add departments, roles or Employees":
           console.log("add");

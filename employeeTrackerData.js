@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
-let view = require("./helperFunctions");
+const { view, add, update } = require("./helperFunctions");
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -45,7 +45,7 @@ let start = () => {
             ])
             .then(({ options }) => {
               let chosen = options.toLowerCase().slice(0, -1);
-              view();
+              view(chosen);
             });
           break;
         case "Add departments, roles or Employees":

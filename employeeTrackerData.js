@@ -25,8 +25,26 @@ function view(option) {
   });
 }
 //ADD
-function add() {
-  console.log("view baby");
+function add(option) {
+  if (option === "department") {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What is the department name?",
+          name: "area",
+        },
+      ])
+      .then(({ area }) => {
+        console.log(area);
+        connection.query(
+          `INSERT INTO department (name) VALUES("${area}")`,
+          (err, res) => {
+            if (err) throw err;
+          }
+        );
+      });
+  }
 }
 //UPDATE
 function update() {
@@ -69,7 +87,19 @@ let start = () => {
             });
           break;
         case "Add departments, roles or Employees":
-          console.log("add");
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                message: "What would you like to add to?",
+                name: "options",
+                choices: ["Departments", "Roles", "Employees"],
+              },
+            ])
+            .then(({ options }) => {
+              let chosen = options.toLowerCase().slice(0, -1);
+              add(chosen);
+            });
           break;
         case "Update employee roles":
           console.log("update");

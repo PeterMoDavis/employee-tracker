@@ -201,6 +201,31 @@ function updateEmployeeManager() {
   );
 }
 
+function toDelete(option) {
+  if (option === "role") {
+    connection.query(`SELECT id, title FROM role`, (err, res) => {
+      if (err) throw err;
+      console.table(res);
+      start();
+    });
+  } else if (option === "employee") {
+    connection.query(
+      `SELECT id, first_name, last_name FROM employee`,
+      (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        start();
+      }
+    );
+  } else if (option === "department") {
+    connection.query(`SELECT id, name FROM department`, (err, res) => {
+      if (err) throw err;
+      console.table(res);
+      start();
+    });
+  }
+}
+
 //==================================================================================
 
 let start = () => {
@@ -213,6 +238,7 @@ let start = () => {
         choices: [
           "View departments, roles or employees",
           "Add departments, roles or Employees",
+          "Delete departments, roles or Employees",
           "Update employee roles",
           "Update employee manager",
           "End",
@@ -250,6 +276,22 @@ let start = () => {
             .then(({ options }) => {
               let chosen = options.toLowerCase().slice(0, -1);
               add(chosen);
+            });
+          break;
+        case "Delete departments, roles or Employees":
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                message: "What would you like to delete?",
+                name: "options",
+                choices: ["Departments", "Roles", "Employees"],
+              },
+            ])
+            .then(({ options }) => {
+              let chosen = options.toLowerCase().slice(0, -1);
+              console.log(chosen);
+              toDelete(chosen);
             });
           break;
         case "Update employee roles":

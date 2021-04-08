@@ -205,7 +205,10 @@ function toDelete(option) {
   if (option === "role") {
     connection.query(`SELECT id, title FROM role`, (err, res) => {
       if (err) throw err;
-      console.table(res);
+      let arr = [];
+      res.forEach((row) => {
+        arr.push(row);
+      });
       start();
     });
   } else if (option === "employee") {
@@ -213,13 +216,37 @@ function toDelete(option) {
       `SELECT id, first_name, last_name FROM employee`,
       (err, res) => {
         if (err) throw err;
-        console.table(res);
-        start();
+        let arr = [];
+        res.forEach(({ id, first_name, last_name }) => {
+          arr.push(`${id}  ${first_name} ${last_name}`);
+        });
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              message: "Which employee would you like to delete?",
+              name: "employee",
+              choices: arr,
+            },
+          ])
+          .then(({ employee }) => {
+            connection.query(
+              `DELETE FROM employee WHERE id = ${employee.split(" ")[0]}`,
+              (err, res) => {
+                if (err) throw err;
+                start();
+              }
+            );
+          });
       }
     );
   } else if (option === "department") {
     connection.query(`SELECT id, name FROM department`, (err, res) => {
       if (err) throw err;
+      let arr = [];
+      res.forEach((row) => {
+        arr.push(row);
+      });
       console.table(res);
       start();
     });

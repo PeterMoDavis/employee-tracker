@@ -206,10 +206,27 @@ function toDelete(option) {
     connection.query(`SELECT id, title FROM role`, (err, res) => {
       if (err) throw err;
       let arr = [];
-      res.forEach((row) => {
-        arr.push(row);
+      res.forEach(({ id, title }) => {
+        arr.push(`${id} ${title}`);
       });
-      start();
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            message: "Which role would you like to delete?",
+            choices: arr,
+            name: "role",
+          },
+        ])
+        .then(({ role }) => {
+          connection.query(
+            `DELETE FROM role WHERE id = ${role.split(" ")[0]}`,
+            (err, res) => {
+              if (err) throw err;
+              start();
+            }
+          );
+        });
     });
   } else if (option === "employee") {
     connection.query(
@@ -244,11 +261,27 @@ function toDelete(option) {
     connection.query(`SELECT id, name FROM department`, (err, res) => {
       if (err) throw err;
       let arr = [];
-      res.forEach((row) => {
-        arr.push(row);
+      res.forEach(({ id, name }) => {
+        arr.push(`${id} ${name}`);
       });
-      console.table(res);
-      start();
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            message: "Which department would you like to delete?",
+            choices: arr,
+            name: "department",
+          },
+        ])
+        .then(({ department }) => {
+          connection.query(
+            `DELETE FROM department WHERE id = ${department.split(" ")[0]}`,
+            (err, res) => {
+              if (err) throw err;
+              start();
+            }
+          );
+        });
     });
   }
 }

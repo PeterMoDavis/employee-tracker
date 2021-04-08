@@ -77,11 +77,84 @@ function add(option) {
           }
         );
       });
-  }
+  } else
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What is the first name of the employee?",
+          name: "firstName",
+        },
+        {
+          type: "input",
+          message: "What is the last name of the employee?",
+          name: "lastName",
+        },
+        {
+          type: "input",
+          message: "What is the role id of the employee?",
+          name: "roleId",
+        },
+        {
+          type: "input",
+          message: "What is the manager id of the employee?",
+          name: "managerId",
+        },
+      ])
+      .then(({ firstName, lastName, roleId, managerId }) => {
+        connection.query(
+          "INSERT INTO employee SET ?",
+          {
+            first_name: firstName,
+            last_name: lastName,
+            role_id: roleId,
+            manager_id: managerId,
+          },
+          (err, res) => {
+            if (err) throw err;
+            start();
+          }
+        );
+      });
 }
 //UPDATE
-function update() {
-  console.log("view baby");
+function updateEmployeeRoles() {
+  connection.query(
+    `SELECT first_name, last_name, id FROM employee`,
+    (err, res) => {
+      if (err) throw err;
+      let arr = [];
+      res.forEach(({ first_name, last_name, id }) => {
+        arr.push(`${id} ${first_name} ${last_name}`);
+      });
+      console.log(arr);
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            message: "Which employee role do you wish to change sire?",
+            name: "employee",
+            choices: arr,
+          },
+          {
+            type: "input",
+            message: "What would you like to change the roll id to?",
+            name: "roleId",
+          },
+        ])
+        .then(({ employee, roleId }) => {
+          connection.query(
+            `UPDATE employee SET role_id = ${roleId} WHERE id=${parseInt(
+              employee.split(" ")[0]
+            )}`,
+            (err, res) => {
+              if (err) throw err;
+              start();
+            }
+          );
+        });
+    }
+  );
 }
 
 //==================================================================================
@@ -135,7 +208,8 @@ let start = () => {
             });
           break;
         case "Update employee roles":
-          console.log("update");
+          updateEmployeeRoles();
+          break;
         default:
           connection.end();
           break;

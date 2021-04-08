@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
+const cTable = require("console.table");
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -41,6 +42,7 @@ function add(option) {
           `INSERT INTO department (name) VALUES("${area}")`,
           (err, res) => {
             if (err) throw err;
+            start();
           }
         );
       });
@@ -156,6 +158,46 @@ function updateEmployeeRoles() {
     }
   );
 }
+function updateEmployeeManager() {
+  connection.query(
+    `SELECT first_name, last_name, id FROM employee`,
+    (err, res) => {
+      if (err) throw err;
+      let arr = [];
+      res.forEach(({ first_name, last_name, id }) => {
+        arr.push(`${id} ${first_name} ${last_name}`);
+      });
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            message: "Which employee manager id do you wish to change sire?",
+            name: "employee",
+            choices: arr,
+          },
+          {
+            type: "input",
+            message: "What would you like to change the manager id to?",
+            name: "managerId",
+          },
+        ])
+        .then(({ employee, managerId }) => {
+          connection.query("UPDATE employee SET ? WHERE ?", [
+            {
+              manager_id: managerId,
+            },
+            {
+              id: parseInt(employee.split(" ")[0]),
+            },
+            (err, res) => {
+              if (err) throw err;
+              start();
+            },
+          ]);
+        });
+    }
+  );
+}
 
 //==================================================================================
 
@@ -170,6 +212,7 @@ let start = () => {
           "View departments, roles or employees",
           "Add departments, roles or Employees",
           "Update employee roles",
+          "Update employee manager",
           "End",
         ],
       },
@@ -209,6 +252,9 @@ let start = () => {
           break;
         case "Update employee roles":
           updateEmployeeRoles();
+          break;
+        case "Update employee manager":
+          updateEmployeeManager();
           break;
         default:
           connection.end();

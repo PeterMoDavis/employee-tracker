@@ -44,6 +44,39 @@ function add(option) {
           }
         );
       });
+  } else if (option === "role") {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What is the title?",
+          name: "title",
+        },
+        {
+          type: "input",
+          message: "What is the salary?",
+          name: "salary",
+        },
+        {
+          type: "input",
+          message: "What is the department id?",
+          name: "departmentId",
+        },
+      ])
+      .then(({ title, salary, departmentId }) => {
+        connection.query(
+          `INSERT INTO role SET ?`,
+          {
+            title: title,
+            salary: salary,
+            department_id: departmentId,
+          },
+          (err, res) => {
+            if (err) throw err;
+            start();
+          }
+        );
+      });
   }
 }
 //UPDATE
@@ -104,6 +137,7 @@ let start = () => {
         case "Update employee roles":
           console.log("update");
         default:
+          connection.end();
           break;
       }
     });

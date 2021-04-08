@@ -129,7 +129,6 @@ function updateEmployeeRoles() {
       res.forEach(({ first_name, last_name, id }) => {
         arr.push(`${id} ${first_name} ${last_name}`);
       });
-      console.log(arr);
       inquirer
         .prompt([
           {
@@ -182,18 +181,21 @@ function updateEmployeeManager() {
           },
         ])
         .then(({ employee, managerId }) => {
-          connection.query("UPDATE employee SET ? WHERE ?", [
-            {
-              manager_id: managerId,
-            },
-            {
-              id: parseInt(employee.split(" ")[0]),
-            },
+          connection.query(
+            "UPDATE employee SET ? WHERE ?",
+            [
+              {
+                manager_id: managerId,
+              },
+              {
+                id: parseInt(employee.split(" ")[0]),
+              },
+            ],
             (err, res) => {
               if (err) throw err;
               start();
-            },
-          ]);
+            }
+          );
         });
     }
   );
